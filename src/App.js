@@ -7,25 +7,33 @@ import {
 function App() {
   const [dados, setDados] = useState([]);
 
-  // Simula atualização de dados a cada 3 segundos
   useEffect(() => {
-    const interval = setInterval(() => {
-      const temperatura = (Math.random() * 15 + 20).toFixed(1); // 20°C a 35°C
-      const vazamento = Math.random() > 0.8; // 20% de chance de "vazamento"
-      const hora = new Date().toLocaleTimeString();
+    const interval = setInterval(async () => {
+      try {
+        const res = await fetch("http://localhost:5000/dados");
+        const data = await res.json();
 
-      const novaLeitura = { temperatura: parseFloat(temperatura), vazamento, hora };
-      setDados((old) => [...old.slice(-19), novaLeitura]);
-    }, 3000);
+        const hora = new Date().toLocaleTimeString();
+        const novaLeitura = {
+          temperatura: data.temperatura,
+          vazamento: data.vazamento,
+          hora,
+        };
+
+        setDados((old) => [...old.slice(-19), novaLeitura]);
+      } catch (error) {
+        console.error("Erro ao buscar dados:", error);
+      }
+    }, 3000); // busca a cada 3 segundos
 
     return () => clearInterval(interval);
   }, []);
 
   const ultimo = dados[dados.length - 1];
-  if (!ultimo) return <h2 style={{ textAlign: "center" }}>Carregando dados simulados...</h2>;
+  if (!ultimo) return <h2 style={{ textAlign: "center" }}>Carregando dados...</h2>;
 
-  const corStatus = ultimo.vazamento ? "#ff4d4d" : "#1e1e2e";
-  const textoStatus = ultimo.vazamento ? "🚨 Vazamento Detectado!" : "✅ Sem Vazamento";
+  const corStatus = ultimo.vazamento ? "#1e1e2e" : "#ff4d4d";
+  const textoStatus = ultimo.vazamento ? "✅ Sem Vazamento" : "🚨 Vazamento Detectado!";
 
   return (
     <div
@@ -41,7 +49,6 @@ function App() {
         🚛 Controle de Vazamento - Caminhão Tanque
       </h1>
 
-      {/* Painéis de status */}
       <div
         style={{
           display: "flex",
@@ -50,7 +57,6 @@ function App() {
           marginBottom: "40px",
         }}
       >
-        {/* Temperatura */}
         <div
           style={{
             padding: "20px",
@@ -65,7 +71,6 @@ function App() {
           </p>
         </div>
 
-        {/* Status de Vazamento */}
         <div
           style={{
             padding: "20px",
@@ -90,7 +95,6 @@ function App() {
         </div>
       </div>
 
-      {/* Gráfico de Temperatura */}
       <ResponsiveContainer width="100%" height={400}>
         <LineChart data={dados}>
           <CartesianGrid strokeDasharray="3 3" stroke="#444" />
@@ -107,7 +111,6 @@ function App() {
         </LineChart>
       </ResponsiveContainer>
 
-      {/* Estilo para animação de alerta */}
       <style>
         {`
           @keyframes piscar {

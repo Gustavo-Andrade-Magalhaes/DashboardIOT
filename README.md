@@ -25,7 +25,7 @@ Acesse: http://localhost:3000
 
 Monitorar remotamente temperatura e vazamentos durante o transporte, aplicando conceitos de IoT + Python + Web.
 
-💡 Tecnologias
+### 💡 Tecnologias
 
 ESP32
 

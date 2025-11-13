@@ -10,7 +10,7 @@ Os dados são enviados via **Wi-Fi** para um servidor **Flask (Python)** e exibi
 
 ### Backend (Flask)
 ```bash
-python app.py
+python service.py
 ```
 **### Frontend (React)**
 ```bash
